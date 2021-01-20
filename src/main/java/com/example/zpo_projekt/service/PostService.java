@@ -35,9 +35,16 @@ public class PostService {
         return postEdited;
     }
 
+    public void updateDonePost(Long id, boolean done){
+        postRepository.updateDone(id,done);
+    }
+
     public void deletePost(Long id) {
         postRepository.deleteById(id);
     }
 
+    public void deletePostByDone(boolean done){
+        postRepository.deleteByDone(done);
+    }
 
 }

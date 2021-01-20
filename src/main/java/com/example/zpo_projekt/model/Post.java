@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDate;
 
 @Entity
 public class Post {
@@ -14,15 +15,25 @@ public class Post {
     private Long id;
     private String author;
     private String content;
-    private String data;
+    private LocalDate data;
+    private boolean done;
 
     public Post() {
     }
 
-    public Post(String author, String content, String data) {
+    public Post(String author, String content, LocalDate data, boolean done) {
         this.author = author;
         this.content = content;
         this.data = data;
+        this.done = done;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 
     public Long getId() {
@@ -49,11 +60,11 @@ public class Post {
         this.content = content;
     }
 
-    public String getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 }

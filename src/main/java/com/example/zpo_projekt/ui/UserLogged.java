@@ -2,10 +2,13 @@ package com.example.zpo_projekt.ui;
 
 import com.example.zpo_projekt.WebSecurityConfig;
 import com.example.zpo_projekt.controller.AppUserController;
+import com.example.zpo_projekt.layout.PostLayout;
 import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.repository.AppUserRepository;
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -15,8 +18,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
+import java.util.logging.Level;
+
 @Title("ZPO")
 @SpringUI(path = "/userLogged")
+@Theme("mytheme")
 public class UserLogged extends UI {
 
     @Autowired
@@ -28,12 +34,20 @@ public class UserLogged extends UI {
     @Autowired
     WebSecurityConfig webSecurityConfig;
 
+    @Autowired
+    PostLayout postLayout;
+
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         SideMenu menu = new SideMenu();
         menu.setMenuCaption("Restauracja");
-       // menu.addMenuItem("Zaloguj się", VaadinIcons.USER,() -> {
-       // });
+        menu.addMenuItem("Lista zadań", VaadinIcons.TASKS, () ->{
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.addComponents(postLayout);
+            menu.setContent(verticalLayout);
+
+        });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
         setContent(menu);
     }
@@ -118,4 +132,29 @@ public class UserLogged extends UI {
 
         return userPasswordLayout;
     }
+
+
+    /*
+    @Override
+    public ConnectorTracker getConnectorTracker() {
+        if (this.tracker == null) {
+            this.tracker =  new ConnectorTracker(this) {
+
+                @Override
+                public void registerConnector(ClientConnector connector) {
+                    try {
+                        super.registerConnector(connector);
+                    } catch (RuntimeException e) {
+                        System.out.println(Level.SEVERE + "Failed connector: {0}" + connector.getClass().getSimpleName());
+                        throw e;
+                    }
+                }
+
+            };
+        }
+
+        return tracker;
+    }
+*/
+
 }

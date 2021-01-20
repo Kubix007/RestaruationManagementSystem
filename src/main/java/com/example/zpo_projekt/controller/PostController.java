@@ -18,6 +18,7 @@ public class PostController {
         this.postService = postService;
     }
 
+
     @GetMapping("/api/posts")
     public List<Post> getAll(){
        return postService.getAll();
@@ -29,7 +30,7 @@ public class PostController {
     }
 
     @PostMapping("/api/posts")
-    public Post createAppUser(@RequestBody Post post){
+    public Post createPost(@RequestBody Post post){
         return postService.createPost(post);
     }
 
@@ -39,7 +40,12 @@ public class PostController {
     }
 
     @DeleteMapping("/api/posts/{id}")
-    public void deleteAppUser(@PathVariable Long id){
+    public void deletePost(@PathVariable Long id){
         postService.deletePost(id);
+    }
+
+    @DeleteMapping("/api/posts/{done}")
+    public void deletePostByDone(@PathVariable boolean done){
+        postService.deletePostByDone(done);
     }
 }

@@ -5,27 +5,33 @@ import com.example.zpo_projekt.controller.AppUserController;
 import com.example.zpo_projekt.layout.PostLayout;
 import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.repository.AppUserRepository;
+import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+
 
 @Title("ZPO")
 @SpringUI(path = "/adminLogged")
+@Theme("mytheme")
 public class AdminLogged extends UI {
 
     @Autowired
-    PostLayout postLayout;
+     PostLayout postLayout;
+
+    @Autowired
+    NewPostWindow newPostWindow;
 
     @Autowired
     AppUserController appUserController;
@@ -35,6 +41,7 @@ public class AdminLogged extends UI {
 
     @Autowired
     WebSecurityConfig webSecurityConfig;
+
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -51,7 +58,9 @@ public class AdminLogged extends UI {
         });
         menu.addMenuItem("Lista zadań", VaadinIcons.TASKS, () ->{
             VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.addComponent(postLayout);
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+            horizontalLayout.addComponents(addNewPostButton(),removeCompletedPostButton());
+            verticalLayout.addComponents(horizontalLayout,postLayout);
             menu.setContent(verticalLayout);
         });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
@@ -194,5 +203,53 @@ public class AdminLogged extends UI {
         return verticalLayout;
     }
 
+    private Button addNewPostButton(){
+        Button addNewPostButton = new Button("");
+        addNewPostButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        addNewPostButton.setIcon(VaadinIcons.PLUS);
 
+        addNewPostButton.addClickListener(v->{
+                Window window = newPostWindow;
+                UI.getCurrent().addWindow(window);
+        });
+
+        return addNewPostButton;
+    }
+
+    private Button removeCompletedPostButton(){
+        Button removeCompletedPostButton = new Button("");
+        removeCompletedPostButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        removeCompletedPostButton.setIcon(VaadinIcons.MINUS);
+
+        removeCompletedPostButton.addClickListener(c->{
+           postLayout.deleteCompletedPost();
+           Notification.show("Pomyślnie usunięto posty!",Notification.Type.HUMANIZED_MESSAGE);
+
+        });
+
+        return removeCompletedPostButton;
+    }
+
+/*
+    @Override
+    public ConnectorTracker getConnectorTracker() {
+        if (this.tracker == null) {
+            this.tracker =  new ConnectorTracker(this) {
+
+                @Override
+                public void registerConnector(ClientConnector connector) {
+                    try {
+                        super.registerConnector(connector);
+                    } catch (RuntimeException e) {
+                        System.out.println(Level.SEVERE + "Failed connector: {0}" + connector.getClass().getSimpleName());
+                        throw e;
+                    }
+                }
+
+            };
+        }
+
+        return tracker;
+    }
+*/
 }
