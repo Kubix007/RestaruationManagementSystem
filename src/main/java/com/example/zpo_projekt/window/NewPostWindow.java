@@ -1,4 +1,4 @@
-package com.example.zpo_projekt.ui;
+package com.example.zpo_projekt.window;
 
 
 import com.example.zpo_projekt.controller.AppUserController;
@@ -29,8 +29,8 @@ public class NewPostWindow extends Window {
     @Autowired
     AppUserController appUserController;
 
-    private Label titleLabel = new Label("Dodaj nowy post");
-    private TextArea contentTextArea = new TextArea("Treść:");
+    private final Label titleLabel = new Label("Dodaj nowy post");
+    private final TextArea contentTextArea = new TextArea("Treść:");
 
     @PostConstruct
     public void init(){

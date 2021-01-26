@@ -1,7 +1,5 @@
 package com.example.zpo_projekt.service;
 
-
-import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.model.Post;
 import com.example.zpo_projekt.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,22 +24,16 @@ public class AppUser implements UserDetails {
     private String surname;
     private String role;
 
+    public AppUser(){
+
+    }
+
     public AppUser(String username, String password, String name, String surname, String role) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.surname = surname;
         this.role = role;
-    }
-
-    public AppUser(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
-
-    public AppUser(){
-
     }
 
     @Override

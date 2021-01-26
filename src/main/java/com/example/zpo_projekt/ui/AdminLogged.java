@@ -2,13 +2,18 @@ package com.example.zpo_projekt.ui;
 
 import com.example.zpo_projekt.WebSecurityConfig;
 import com.example.zpo_projekt.controller.AppUserController;
+import com.example.zpo_projekt.controller.ScheduleController;
+import com.example.zpo_projekt.window.NewPostWindow;
+import com.example.zpo_projekt.window.NewScheduleWindow;
 import com.example.zpo_projekt.layout.PostLayout;
+import com.example.zpo_projekt.layout.ScheduleLayout;
 import com.example.zpo_projekt.model.AppUser;
+import com.example.zpo_projekt.model.Schedule;
 import com.example.zpo_projekt.repository.AppUserRepository;
+import com.example.zpo_projekt.repository.ScheduleRepository;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -19,8 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
-import java.util.logging.Level;
-
 
 @Title("ZPO")
 @SpringUI(path = "/adminLogged")
@@ -28,13 +31,25 @@ import java.util.logging.Level;
 public class AdminLogged extends UI {
 
     @Autowired
-     PostLayout postLayout;
+    PostLayout postLayout;
+
+    @Autowired
+    ScheduleLayout scheduleLayout;
 
     @Autowired
     NewPostWindow newPostWindow;
 
     @Autowired
+    NewScheduleWindow newScheduleWindow;
+
+    @Autowired
     AppUserController appUserController;
+
+    @Autowired
+    ScheduleController scheduleController;
+
+    @Autowired
+    ScheduleRepository scheduleRepository;
 
     @Autowired
     AppUserRepository appUserRepository;
@@ -63,6 +78,11 @@ public class AdminLogged extends UI {
             verticalLayout.addComponents(horizontalLayout,postLayout);
             menu.setContent(verticalLayout);
         });
+        menu.addMenuItem("Grafik", VaadinIcons.CALENDAR, () ->{
+           VerticalLayout verticalLayout = new VerticalLayout();
+           verticalLayout.addComponents(editSchedule(),scheduleLayout);
+           menu.setContent(verticalLayout);
+        });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
         setContent(menu);
     }
@@ -75,7 +95,6 @@ public class AdminLogged extends UI {
         sideMenu.addUserMenuItem("Ustawienia", VaadinIcons.WRENCH, () ->{
             HorizontalLayout horizontalLayout = new HorizontalLayout();
             horizontalLayout.addComponents(setUserDetailsLayout(),setUserPasswordLayout());
-
             sideMenu.setContent(horizontalLayout);
         });
 
@@ -110,8 +129,9 @@ public class AdminLogged extends UI {
             removeUserButton.addClickListener(v->{
                appUserController.deleteAppUser(item.getId());
                appUserGrid.setItems(appUserController.getAll());
+               scheduleRepository.deleteByName(item.getName());
                Notification.show("Użytkownik został usunięty", Notification.Type.HUMANIZED_MESSAGE);
-
+               scheduleLayout.update();
             });
             return removeUserButton;
         }).setWidth(110);
@@ -125,6 +145,8 @@ public class AdminLogged extends UI {
         TextField nameTextField = new TextField("Imię:");
         TextField surnameTextField = new TextField("Nazwisko:");
         Button saveUserDetailsButton = new Button("Zapisz");
+        saveUserDetailsButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
 
         nameTextField.setPlaceholder(appUserController.getSingleAppUser(getCurrentUsername()).getName());
         surnameTextField.setPlaceholder(appUserController.getSingleAppUser(getCurrentUsername()).getSurname());
@@ -133,6 +155,7 @@ public class AdminLogged extends UI {
             if (!nameTextField.isEmpty() && !surnameTextField.isEmpty()){
                 AppUser appUser = appUserController.getSingleAppUser(getCurrentUsername());
                 appUserController.updateAppUser(appUser,nameTextField.getValue(),surnameTextField.getValue());
+                scheduleRepository.updateName(appUserController.getSingleAppUser(getCurrentUsername()).getName(),nameTextField.getValue());
                 Notification.show("Pomyślnie zaktualizowano!",Notification.Type.HUMANIZED_MESSAGE);
             }
             else {
@@ -152,6 +175,8 @@ public class AdminLogged extends UI {
         PasswordField oldPasswordField = new PasswordField("Stare hasło:");
         PasswordField newPasswordField = new PasswordField("Nowe hasło:");
         Button saveUserPasswordButton = new Button("Zmień hasło");
+        saveUserPasswordButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
 
         saveUserPasswordButton.addClickListener(v->{
             AppUser currentUser = appUserController.getSingleAppUser(getCurrentUsername());
@@ -174,22 +199,33 @@ public class AdminLogged extends UI {
         VerticalLayout verticalLayout = new VerticalLayout();
         Label newUserLabel = new Label("Dodaj użytkownika");
         TextField loginTextField = new TextField("Nazwa użytkownika:");
+        TextField nameTextField = new TextField("Imię:");
+        TextField surnameTextField = new TextField("Nazwisko:");
         PasswordField passwordField = new PasswordField("Tymczasowe hasło:");
         ComboBox<String> roleComboBox = new ComboBox<>("Rola użytkownika:");
         roleComboBox.setItems("USER","ADMIN");
         Button buttonAddUser = new Button("Dodaj użytkownika");
+        buttonAddUser.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
 
         buttonAddUser.addClickListener(v->{
             String login = loginTextField.getValue();
+            String name = nameTextField.getValue();
+            String surname = surnameTextField.getValue();
             String password = passwordField.getValue();
             String role = roleComboBox.getValue();
-            if (!loginTextField.isEmpty() && !passwordField.isEmpty() && !roleComboBox.isEmpty()){
-                AppUser appUser = new AppUser(login,webSecurityConfig.passwordEncoder().encode(password),role);
+            if (!loginTextField.isEmpty() && !passwordField.isEmpty() && !roleComboBox.isEmpty()
+                    && !nameTextField.isEmpty() && !surnameTextField.isEmpty()){
+                AppUser appUser = new AppUser(login,webSecurityConfig.passwordEncoder().encode(password),name,surname,role);
                 appUserController.createAppUser(appUser);
+                Schedule newScheduleUser = new Schedule(name);
+                scheduleController.createSchedule(newScheduleUser);
                 loginTextField.setValue("");
                 passwordField.setValue("");
                 roleComboBox.setValue("");
                 Notification.show("Pomyślnie zarejestrowano użytkownika", Notification.Type.HUMANIZED_MESSAGE);
+                scheduleLayout.update();
+                newScheduleWindow.update();
 
             }
             else {
@@ -198,7 +234,7 @@ public class AdminLogged extends UI {
 
         });
         verticalLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
-        verticalLayout.addComponents(newUserLabel,loginTextField,passwordField,roleComboBox,buttonAddUser);
+        verticalLayout.addComponents(newUserLabel,loginTextField,nameTextField,surnameTextField,passwordField,roleComboBox,buttonAddUser);
 
         return verticalLayout;
     }
@@ -230,26 +266,15 @@ public class AdminLogged extends UI {
         return removeCompletedPostButton;
     }
 
-/*
-    @Override
-    public ConnectorTracker getConnectorTracker() {
-        if (this.tracker == null) {
-            this.tracker =  new ConnectorTracker(this) {
+    private Button editSchedule(){
+        Button editSchedule = new Button("Edytuj grafik");
+        editSchedule.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
-                @Override
-                public void registerConnector(ClientConnector connector) {
-                    try {
-                        super.registerConnector(connector);
-                    } catch (RuntimeException e) {
-                        System.out.println(Level.SEVERE + "Failed connector: {0}" + connector.getClass().getSimpleName());
-                        throw e;
-                    }
-                }
+        editSchedule.addClickListener(v->{
+                Window window = newScheduleWindow;
+                UI.getCurrent().addWindow(window);
+        });
 
-            };
-        }
-
-        return tracker;
+        return editSchedule;
     }
-*/
 }

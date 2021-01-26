@@ -2,12 +2,9 @@ package com.example.zpo_projekt.ui;
 
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ClassResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Image;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 

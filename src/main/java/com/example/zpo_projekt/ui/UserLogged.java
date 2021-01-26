@@ -3,26 +3,27 @@ package com.example.zpo_projekt.ui;
 import com.example.zpo_projekt.WebSecurityConfig;
 import com.example.zpo_projekt.controller.AppUserController;
 import com.example.zpo_projekt.layout.PostLayout;
+import com.example.zpo_projekt.layout.ScheduleLayout;
 import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.repository.AppUserRepository;
+import com.example.zpo_projekt.repository.ScheduleRepository;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
-import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.vaadin.teemusa.sidemenu.SideMenu;
 
-import java.util.logging.Level;
 
 @Title("ZPO")
-@SpringUI(path = "/userLogged")
 @Theme("mytheme")
+@SpringUI(path = "/userLogged")
 public class UserLogged extends UI {
 
     @Autowired
@@ -35,8 +36,13 @@ public class UserLogged extends UI {
     WebSecurityConfig webSecurityConfig;
 
     @Autowired
+    ScheduleRepository scheduleRepository;
+
+    @Autowired
     PostLayout postLayout;
 
+    @Autowired
+    ScheduleLayout scheduleLayout;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -47,6 +53,11 @@ public class UserLogged extends UI {
             verticalLayout.addComponents(postLayout);
             menu.setContent(verticalLayout);
 
+        });
+        menu.addMenuItem("Grafik", VaadinIcons.CALENDAR, () ->{
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.addComponent(scheduleLayout);
+            menu.setContent(verticalLayout);
         });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
         setContent(menu);
@@ -88,6 +99,7 @@ public class UserLogged extends UI {
         TextField nameTextField = new TextField("Imię:");
         TextField surnameTextField = new TextField("Nazwisko:");
         Button saveUserDetailsButton = new Button("Zapisz");
+        saveUserDetailsButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
 
         nameTextField.setPlaceholder(appUserController.getSingleAppUser(getCurrentUsername()).getName());
         surnameTextField.setPlaceholder(appUserController.getSingleAppUser(getCurrentUsername()).getSurname());
@@ -96,6 +108,7 @@ public class UserLogged extends UI {
             if (!nameTextField.isEmpty() && !surnameTextField.isEmpty()){
                 AppUser appUser = appUserController.getSingleAppUser(getCurrentUsername());
                 appUserController.updateAppUser(appUser,nameTextField.getValue(),surnameTextField.getValue());
+                scheduleRepository.updateName(appUserController.getSingleAppUser(getCurrentUsername()).getName(),nameTextField.getValue());
                 Notification.show("Pomyślnie zaktualizowano!",Notification.Type.HUMANIZED_MESSAGE);
             }
             else {
@@ -115,6 +128,8 @@ public class UserLogged extends UI {
         PasswordField oldPasswordField = new PasswordField("Stare hasło:");
         PasswordField newPasswordField = new PasswordField("Nowe hasło:");
         Button saveUserPasswordButton = new Button("Zmień hasło");
+        saveUserPasswordButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
 
         saveUserPasswordButton.addClickListener(v->{
             AppUser currentUser = appUserController.getSingleAppUser(getCurrentUsername());
@@ -133,28 +148,5 @@ public class UserLogged extends UI {
         return userPasswordLayout;
     }
 
-
-    /*
-    @Override
-    public ConnectorTracker getConnectorTracker() {
-        if (this.tracker == null) {
-            this.tracker =  new ConnectorTracker(this) {
-
-                @Override
-                public void registerConnector(ClientConnector connector) {
-                    try {
-                        super.registerConnector(connector);
-                    } catch (RuntimeException e) {
-                        System.out.println(Level.SEVERE + "Failed connector: {0}" + connector.getClass().getSimpleName());
-                        throw e;
-                    }
-                }
-
-            };
-        }
-
-        return tracker;
-    }
-*/
 
 }
