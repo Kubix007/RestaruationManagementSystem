@@ -1,7 +1,6 @@
 package com.example.zpo_projekt;
 
 
-import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

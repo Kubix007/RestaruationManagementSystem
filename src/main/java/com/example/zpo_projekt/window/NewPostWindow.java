@@ -31,11 +31,14 @@ public class NewPostWindow extends Window {
 
     private final Label titleLabel = new Label("Dodaj nowy post");
     private final TextArea contentTextArea = new TextArea("Treść:");
+    private final Button addNewPostButton = addNewPostButton();
 
     @PostConstruct
     public void init(){
-        FormLayout formLayout = new FormLayout(titleLabel,contentTextArea,addNewPostButton());
-        setContent(formLayout);
+        VerticalLayout verticalLayout = new VerticalLayout(titleLabel,contentTextArea,addNewPostButton);
+        verticalLayout.setComponentAlignment(titleLabel,Alignment.MIDDLE_CENTER);
+        verticalLayout.setComponentAlignment(addNewPostButton,Alignment.MIDDLE_CENTER);
+        setContent(verticalLayout);
         setSettingsForWindow();
     }
 
@@ -66,8 +69,6 @@ public class NewPostWindow extends Window {
     private void setSettingsForWindow(){
         setResizable(false);
         setDraggable(false);
-        setHeight("250px");
-        setWidth("300px");
         center();
         contentTextArea.setMaxLength(255);
     }

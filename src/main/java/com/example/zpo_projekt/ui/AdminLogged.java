@@ -3,8 +3,8 @@ package com.example.zpo_projekt.ui;
 import com.example.zpo_projekt.WebSecurityConfig;
 import com.example.zpo_projekt.controller.AppUserController;
 import com.example.zpo_projekt.controller.ScheduleController;
-import com.example.zpo_projekt.window.NewPostWindow;
-import com.example.zpo_projekt.window.NewScheduleWindow;
+import com.example.zpo_projekt.layout.FoodProductLayout;
+import com.example.zpo_projekt.window.*;
 import com.example.zpo_projekt.layout.PostLayout;
 import com.example.zpo_projekt.layout.ScheduleLayout;
 import com.example.zpo_projekt.model.AppUser;
@@ -34,13 +34,25 @@ public class AdminLogged extends UI {
     PostLayout postLayout;
 
     @Autowired
+    FoodProductLayout foodProductLayout;
+
+    @Autowired
     ScheduleLayout scheduleLayout;
 
     @Autowired
     NewPostWindow newPostWindow;
 
     @Autowired
+    NewFoodProductWindow newFoodProductWindow;
+
+    @Autowired
     NewScheduleWindow newScheduleWindow;
+
+    @Autowired
+    EditFoodProductWindow editFoodProductWindow;
+
+    @Autowired
+    DeleteFoodProductWindow deleteFoodProductWindow;
 
     @Autowired
     AppUserController appUserController;
@@ -82,6 +94,12 @@ public class AdminLogged extends UI {
            VerticalLayout verticalLayout = new VerticalLayout();
            verticalLayout.addComponents(editSchedule(),scheduleLayout);
            menu.setContent(verticalLayout);
+        });
+        menu.addMenuItem("Stan magazynu", VaadinIcons.BUILDING, () ->{
+            VerticalLayout verticalLayout = new VerticalLayout();
+            HorizontalLayout horizontalLayout = new HorizontalLayout(addNewFoodProductButton(),editFoodProductButton(),removeFoodProductButton());
+            verticalLayout.addComponents(horizontalLayout,foodProductLayout);
+            menu.setContent(verticalLayout);
         });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
         setContent(menu);
@@ -250,6 +268,46 @@ public class AdminLogged extends UI {
         });
 
         return addNewPostButton;
+    }
+
+    private Button addNewFoodProductButton(){
+        Button addNewFoodProductButton = new Button("");
+        addNewFoodProductButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        addNewFoodProductButton.setIcon(VaadinIcons.PLUS);
+
+
+        addNewFoodProductButton.addClickListener(v->{
+            Window window = newFoodProductWindow;
+            UI.getCurrent().addWindow(window);
+        });
+
+        return addNewFoodProductButton;
+    }
+
+    private Button editFoodProductButton(){
+        Button editFoodProductButton = new Button("");
+        editFoodProductButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        editFoodProductButton.setIcon(VaadinIcons.EDIT);
+
+        editFoodProductButton.addClickListener(v->{
+            Window window = editFoodProductWindow;
+            UI.getCurrent().addWindow(window);
+        });
+
+        return editFoodProductButton;
+    }
+
+    private Button removeFoodProductButton(){
+        Button removeFoodProductButton = new Button("");
+        removeFoodProductButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        removeFoodProductButton.setIcon(VaadinIcons.MINUS);
+
+        removeFoodProductButton.addClickListener(v->{
+            Window window = deleteFoodProductWindow;
+            UI.getCurrent().addWindow(window);
+        });
+
+        return removeFoodProductButton;
     }
 
     private Button removeCompletedPostButton(){

@@ -1,14 +1,12 @@
 package com.example.zpo_projekt.layout;
 
 import com.example.zpo_projekt.model.Post;
-import com.example.zpo_projekt.repository.PostRepository;
 import com.example.zpo_projekt.service.PostService;
 import com.vaadin.annotations.Theme;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.annotation.PostConstruct;
 import java.util.List;
 

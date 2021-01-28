@@ -2,11 +2,13 @@ package com.example.zpo_projekt.ui;
 
 import com.example.zpo_projekt.WebSecurityConfig;
 import com.example.zpo_projekt.controller.AppUserController;
+import com.example.zpo_projekt.layout.FoodProductLayout;
 import com.example.zpo_projekt.layout.PostLayout;
 import com.example.zpo_projekt.layout.ScheduleLayout;
 import com.example.zpo_projekt.model.AppUser;
 import com.example.zpo_projekt.repository.AppUserRepository;
 import com.example.zpo_projekt.repository.ScheduleRepository;
+import com.example.zpo_projekt.window.EditFoodProductWindow;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.icons.VaadinIcons;
@@ -42,6 +44,12 @@ public class UserLogged extends UI {
     PostLayout postLayout;
 
     @Autowired
+    EditFoodProductWindow editFoodProductWindow;
+
+    @Autowired
+    FoodProductLayout foodProductLayout;
+
+    @Autowired
     ScheduleLayout scheduleLayout;
 
     @Override
@@ -57,6 +65,11 @@ public class UserLogged extends UI {
         menu.addMenuItem("Grafik", VaadinIcons.CALENDAR, () ->{
             VerticalLayout verticalLayout = new VerticalLayout();
             verticalLayout.addComponent(scheduleLayout);
+            menu.setContent(verticalLayout);
+        });
+        menu.addMenuItem("Stan magazynu", VaadinIcons.BUILDING, () ->{
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.addComponents(editFoodProductButton(),foodProductLayout);
             menu.setContent(verticalLayout);
         });
         setUser(getCurrentUsername(),VaadinIcons.MALE,menu);
@@ -147,6 +160,20 @@ public class UserLogged extends UI {
 
         return userPasswordLayout;
     }
+
+    private Button editFoodProductButton(){
+        Button editFoodProductButton = new Button("");
+        editFoodProductButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        editFoodProductButton.setIcon(VaadinIcons.EDIT);
+
+        editFoodProductButton.addClickListener(v->{
+            Window window = editFoodProductWindow;
+            UI.getCurrent().addWindow(window);
+        });
+
+        return editFoodProductButton;
+    }
+
 
 
 }
