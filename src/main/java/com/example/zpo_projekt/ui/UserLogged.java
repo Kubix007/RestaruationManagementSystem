@@ -69,6 +69,7 @@ public class UserLogged extends UI {
         });
         menu.addMenuItem("Stan magazynu", VaadinIcons.BUILDING, () ->{
             VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
             verticalLayout.addComponents(editFoodProductButton(),foodProductLayout);
             menu.setContent(verticalLayout);
         });

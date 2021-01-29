@@ -4,6 +4,7 @@ import com.example.zpo_projekt.controller.FoodProductController;
 import com.example.zpo_projekt.model.FoodProduct;
 import com.vaadin.spring.annotation.SpringComponent;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +24,7 @@ public class FoodProductLayout extends VerticalLayout {
     }
 
     public void update(){
+        setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
         setFoodProducts(foodProductController.getAll());
     }
 

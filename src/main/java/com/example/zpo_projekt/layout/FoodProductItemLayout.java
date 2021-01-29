@@ -31,9 +31,11 @@ public class FoodProductItemLayout extends HorizontalLayout {
         addStyleName(ValoTheme.LAYOUT_WELL);
         productName.addStyleName(ValoTheme.TEXTAREA_BORDERLESS);
         productName.setReadOnly(true);
+        productName.setWidth("200px");
         amount.addStyleNames(ValoTheme.TEXTFIELD_BORDERLESS);
         amount.setReadOnly(true);
         postfix.addStyleName(ValoTheme.TEXTAREA_BORDERLESS);
         postfix.setReadOnly(true);
+        postfix.setWidth("50px");
     }
 }

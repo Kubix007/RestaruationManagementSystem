@@ -98,6 +98,7 @@ public class AdminLogged extends UI {
         menu.addMenuItem("Stan magazynu", VaadinIcons.BUILDING, () ->{
             VerticalLayout verticalLayout = new VerticalLayout();
             HorizontalLayout horizontalLayout = new HorizontalLayout(addNewFoodProductButton(),editFoodProductButton(),removeFoodProductButton());
+            verticalLayout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
             verticalLayout.addComponents(horizontalLayout,foodProductLayout);
             menu.setContent(verticalLayout);
         });
